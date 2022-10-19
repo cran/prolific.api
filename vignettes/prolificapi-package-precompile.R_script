@@ -1,0 +1,193 @@
+library(knitr)
+
+if (!
+file.exists("prolificapi-package.precompile")
+) {
+    if (file.exists(
+        "./vignettes/prolificapi-package.precompile"
+    )) {
+        setwd("./vignettes/")
+    } else {
+        stop(paste0("prolificapi-package.precompile not found in\n", getwd()))
+    }
+}
+infile <-
+    "prolificapi-package.precompile"
+
+
+outfile <-
+    gsub("\\.precompile", "\\.Rmd", infile)
+
+# ========================= > Precompile vignette < ========================== #
+
+# ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+# || Execute the code from <infile> and store to <outfile>                 || #
+# └└────────────────────────────────────────────────────────────────────────┘┘ #
+knitr::knit(infile, output = outfile)
+# ────────────────────────────────── <end> ─────────────────────────────────── #
+
+# ============================= > input_chunk < ============================== #
+
+# ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+# || Function for writing RMD chunk code                                    || #
+# || to add chunks to the precompiled vignette                              || #
+# └└────────────────────────────────────────────────────────────────────────┘┘ #
+input_chunk <-
+    function(chunk_name,
+             options = NULL,
+             chunk_file = NULL) {
+        paste0(
+            if (!is.null(chunk_file)) {
+                paste0(
+                    c(
+                        "```{r, include = FALSE, cache = FALSE, eval = TRUE}",
+                        "knitr::read_chunk(",
+                        paste0("\t\"", chunk_file, "\""),
+                        ")\n"
+                    ),
+                    collapse = "\n"
+                )
+            },
+            paste0(
+                "```{r, ",
+                chunk_name,
+                if (!is.null(options)) {
+                    paste0(
+                        ", ",
+                        paste0(
+                            names(options),
+                            " = ",
+                            Reduce(c, options),
+                            collapse = ", "
+                        )
+                    )
+                },
+                "}",
+                "\n",
+                "```"
+            ),
+            collapse =
+                "\n\n"
+        )
+    }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
+
+# ============= > Add markdown chunks to precompiled vignette < ============== #
+
+rmd <-
+    readLines(outfile)
+
+# ========================= > Put 'r_setup' chunk < ========================== #
+
+# ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+# || Use the same R setup for the vignette itself as in its precompilation  || #
+# └└────────────────────────────────────────────────────────────────────────┘┘ #
+pos <-
+    which(grepl("<\\[\\[r_setup\\]\\]>", rmd))
+if (length(pos) > 0) {
+    rmd[pos] <-
+        input_chunk(
+            "r_setup",
+            options =
+                list(
+                    eval = TRUE,
+                    include = FALSE,
+                    echo = FALSE
+                ),
+            chunk_file =
+                "_R_setup.R"
+        )
+
+    rmd <-
+        rmd[-(pos + c(-1, 1))]
+} else {
+    stop("r_setup not found!\n")
+}
+
+pos <-
+    which(grepl("<\\[\\[r_restore\\]\\]>", rmd))
+if (length(pos) > 0) {
+    rmd[pos] <-
+        input_chunk(
+            "r_restore",
+            options =
+                list(
+                    eval = TRUE,
+                    include = FALSE,
+                    echo = FALSE
+                ),
+            chunk_file =
+                "_R_setup.R"
+        )
+
+    rmd <-
+        rmd[-(pos + c(-1, 1))]
+} else {
+    stop("r_restore not found!\n")
+}
+
+
+# ────────────────────────────────── <end> ─────────────────────────────────── #
+
+# ============== > Put 'list_of_prescreeners_reactable' chunk < ============== #
+
+# ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+# || Replace the knitr "screenshot" of the interactive prescreener table    || #
+# || with the actual interactive table                                      || #
+# └└────────────────────────────────────────────────────────────────────────┘┘ #
+
+pos <-
+    which(grepl("<\\[\\[list_of_prescreeners_reactable\\]\\]>", rmd))
+if (length(pos) > 0) {
+    rmd[pos] <-
+        input_chunk(
+            "list_of_prescreeners_reactable",
+            options =
+                list(
+                    eval = TRUE,
+                    include = TRUE,
+                    echo = FALSE
+                ),
+            chunk_file =
+                "_list_prescreeners.R"
+        )
+
+    rmd <-
+        rmd[-(pos + c(-1, 1))]
+} else {
+    stop("list_of_prescreeners_reactable not found!\n")
+}
+# ────────────────────────────────── <end> ─────────────────────────────────── #
+
+# ============== > Put 'list_fields_methods_reactable' chunk < =============== #
+
+# ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+# || Replace the knitr "screenshot" of the interactive fields / methods     || #
+# || table with the actual interactive table                                || #
+# └└────────────────────────────────────────────────────────────────────────┘┘ #
+pos <-
+    which(grepl("<\\[\\[list_fields_methods_reactable\\]\\]>", rmd))
+
+if (length(pos) > 0) {
+    rmd[pos] <-
+        input_chunk(
+            "list_fields_methods_reactable",
+            options =
+                list(
+                    eval = TRUE,
+                    include = TRUE,
+                    echo = FALSE
+                ),
+            chunk_file =
+                "_list_fields_methods.R"
+        )
+
+    rmd <-
+        rmd[-(pos + c(-1, 1))]
+} else {
+    stop("list_fields_methods_reactable not found!\n")
+}
+# ────────────────────────────────── <end> ─────────────────────────────────── #
+
+writeLines(rmd, con = outfile)
+# ────────────────────────────────── <end> ─────────────────────────────────── #
