@@ -67,20 +67,14 @@
 NULL
 
 api_access$methods(
+
+    # ================================= > show < ================================= #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || Show the main contents of an api_access object to the user             || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
     show =
         function(hide_token = TRUE) {
-            # "
-            #     Show the main contents of an api_access object to the user.
-            #     \\subsection{Parameters}{
-            #         \\itemize{
-            #             \\item{
-            #                 \\code{hide_token}:
-            #                 Whether the object's \\code{hapi_token} should be shown.\\cr
-            #                 The default is \\bold{FALSE}, since this token is private information.
-            #             }
-            #         }
-            #     }
-            # "
             sep <- paste0(rep("=", getOption("width")), collapse = "")
 
             cat(paste0(sep, "\n", "API access summary:", "\n"))
@@ -185,71 +179,49 @@ api_access$methods(
             cat("\n")
             cat(sep, "\n")
         },
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
+
+    # ================================ > access < ================================ #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || Core method for accessing the API                                      || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
+
     access =
         function(endpoint,
                  method = c("get", "post", "patch", "put", "delete"),
                  data = NULL,
                  as_list = TRUE,
                  silent = TRUE) {
-            # "
-            #     Method for accessing the API.
-            #     \\subsection{Parameters}{
-            #         \\itemize{
-            #             \\item{
-            #                 \\code{endpoint}:
-            #                 The API endpoint which is accessed, as \\bold{string}.
-            #             }
-            #             \\item{
-            #                 \\code{method}:
-            #                 The method that is used, as \\bold{string}.
-            #                 One of 'get', 'post', 'place', 'patch', 'delete'.
-            #             }
-            #             \\item{
-            #                 \\code{data}:
-            #                 The data to be transfered in the body of the API call.
-            #                 A \\bold{JSON string}, \\bold{JSON file},
-            #                 \\bold{list}, \\bold{prolific_study object} or \\bold{NULL}.
-            #                 R-objects are converted to a JSON string.
-            #                 NULL means that no data is transfered.
-            #             }
-            #             \\item{
-            #                 \\code{as_list}:
-            #                 A \code{\link[=logical]{logical}} value that indicates whether the return of the API call should be converted to a list.
-            #             }
-            #         }
-            #     }
-            #     \\subsection{Return Value}{
-            #          A \\code{\link[=list]{list}} or \\strong{json-string}, depending on argument \\code{as_list}.
-            #     }
-            # "
-
             method <- tryCatch(match.arg(method),
                 error = function(e) stop(gsub("'arg'", "'method'", e))
             )
 
             # Run API access command,
             # consisting of acces method, header (data and authorization) and endpoint
-            output <- .format_output(
-                .execute(
-                    paste0(
-                        accessors[[tolower(method)]],
-                        ifelse(silent, " -s", "")
-                    ),
-                    " ",             
+            output <-
+                org_output <-
+                .format_output(
+                    .execute(
+                        paste0(
+                            .self$accessors[[tolower(method)]],
+                            ifelse(silent, " -s", "")
+                        ),
+                        " ",
                         .format_input(data, list_of_prescreeners = if (any(class(data) %in% c("prolific_study", "eligibility_requirements", "prolific_prescreener"))) {
                             .self$.internals$methods$prescreeners()
                         } else {
                             NULL
                         }),
-                    " ",
-                    .self$.internals$api_authorization,
-                    " ",
-                    .self$.internals$fields$`.referer`,
-                    " ",
-                    "\"", .make_url(c(entrypoint, endpoint)), "\""
-                ),
-                as_list = as_list || (class(data) %in% c("prolific_study"))
-            )
+                        " ",
+                        .self$.internals$api_authorization,
+                        " ",
+                        .self$.internals$fields$`.referer`,
+                        " ",
+                        "\"", .make_url(c(.self$entrypoint, endpoint)), "\""
+                    ),
+                    as_list = as_list || (class(data) %in% c("prolific_study"))
+                )
 
             # Convert the entpoint link to check the endpoint
 
@@ -258,40 +230,89 @@ api_access$methods(
             )[[1]]
 
             if (method == "get" && link_split[length(link_split)] == "studies") {
-                output <- output$results
-                output[(c(
-                    "publish_at", "is_pilot", "is_underpaying", "reward_level",
-                    "quota_requirements", "is_reallocated"
-                ))] <- NULL
+                output <-
+                    org_output
 
-                output$date_created <-
-                    as.POSIXct(output$date_created, format = "%Y-%m-%dT%H:%M:%S")
+                output <- as.list(output$results)
+
+                zero_length <-
+                    which(vapply(output, function(x) length(Reduce(c, x)), 1) == 0)
+
+                output[zero_length] <-
+                    lapply(
+                        output[zero_length],
+                        function(x) {
+                            rep(NA, length(x))
+                        }
+                    )
 
                 date_created <-
-                    data.table::IDateTime(output$date_created)
+                    data.table::IDateTime(as.POSIXct(output$date_created, format = "%Y-%m-%dT%H:%M:%S"))
+
                 data.table::setnames(date_created, 1:2, c("creation_day", "creation_time"))
+
                 output$date_created <-
                     NULL
-                output <-
-                    c(output, date_created)
 
-                data.table::setDT(output)
+                atomics <-
+                    vapply(output, is.atomic, TRUE)
+
+                output[!atomics] <-
+                    lapply(
+                        output[!atomics],
+                        function(x) {
+                            switch(class(x)[1],
+                                "data.frame" = data.table(x),
+                                "list" = Reduce(c, x),
+                                x
+                            )
+                        }
+                    )
+
+                output[atomics] <-
+                    lapply(
+                        names(atomics)[atomics],
+                        function(x) {
+                            y <-
+                                data.table(output[[x]])
+                            data.table::setnames(y, 1, x)
+                            y
+                        }
+                    )
+
+                output <-
+                    c(output, list(date_created))
+
+                output <-
+                    Reduce(
+                        cbind,
+                        output
+                    )
 
                 if (nrow(output) == 0) {
                     output <-
                         data.table::data.table(
-                            "creation_day" = integer(1),
-                            "creation_time" = integer(1),
-                            "internal_name" = character(1),
-                            "name" = character(1),
                             "id" = character(1),
+                            "name" = character(1),
                             "study_type" = character(1),
+                            "creation_day" = as.IDate(1),
+                            "creation_time" = as.ITime(1),
                             "total_available_places" = integer(1),
                             "places_taken" = integer(1),
                             "reward" = integer(1),
+                            "max_submissions_per_participant" = integer(1),
+                            "max_concurrent_submissions" = integer(1),
+                            "internal_name" = character(1),
                             "status" = character(1),
                             "number_of_submissions" = integer(1),
-                            "total_cost" = double(1),
+                            "total_cost" = numeric(1),
+                            "stratum" = logical(1),
+                            "publish_at" = character(1),
+                            "is_underpaying" = logical(1),
+                            "below_prolific_min" = logical(1),
+                            "below_original_estimate" = logical(1),
+                            "quota_requirements" = list(1),
+                            "is_reallocated" = logical(1),
                             "privacy_notice" = character(1)
                         )[0, ]
                 }
@@ -307,7 +328,6 @@ api_access$methods(
             study_fields <- study_fields[!study_fields %in% c("url_parameters", "...")]
             if (all(study_fields %in% names(output))) {
                 if (class(data) %in% c("prolific_study")) {
-
                     # If the input is a prolific_study, e.g. when submitting / updating a study:
                     # update the input and return a reference instead of a new object
                     if ((length(data$eligibility_requirements) > 0) | (length(output$eligibility_requirements) > 0)) {
@@ -333,70 +353,16 @@ api_access$methods(
             }
             return(output)
         },
-    # get =
-    #     function(endpoint,
-    #              data = NULL,
-    #              as_list = TRUE) {
-    #         .self$access(
-    #             endpoint = endpoint,
-    #             method = "get",
-    #             data = data,
-    #             as_list = as_list
-    #         )
-    #     },
-    # post =
-    #     function(endpoint,
-    #              data = NULL,
-    #              as_list = TRUE) {
-    #         .self$access(
-    #             endpoint = endpoint,
-    #             method = "post",
-    #             data = data,
-    #             as_list = as_list
-    #         )
-    #     },
-    # patch =
-    #     function(endpoint,
-    #              data = NULL,
-    #              as_list = TRUE) {
-    #         .self$access(
-    #             endpoint = endpoint,
-    #             method = "patch",
-    #             data = data,
-    #             as_list = as_list
-    #         )
-    #     },
-    # put =
-    #     function(endpoint,
-    #              data = NULL,
-    #              as_list = TRUE) {
-    #         .self$access(
-    #             endpoint = endpoint,
-    #             method = "put",
-    #             data = data,
-    #             as_list = as_list
-    #         )
-    #     },
-    # delete =
-    #     function(endpoint,
-    #              data = NULL,
-    #              as_list = TRUE) {
-    #         .self$access(
-    #             endpoint = endpoint,
-    #             method = "delete",
-    #             data = data,
-    #             as_list = as_list
-    #         )
-    #     },
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
+
+    # ========================= > check_authorization < ========================== #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || Check whether the API authorization using \code{api_token} works      || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
+
     check_authorization =
         function() {
-            # "
-            #     Check whether the API authorization using \\code{api_tokenz} works.
-            #     \\subsection{Return Value}{
-            #         A logical value that indicates whether API access works.
-            #     }
-            # "
-
             output <- !grepl("error", tolower(access(endpoint = "users/me", method = "get", as_list = FALSE)))
 
             if (output) {
@@ -407,6 +373,14 @@ api_access$methods(
 
             return(output)
         },
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
+
+    # ============================= > prescreeners < ============================= #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || Retrieve & format list of prescreeners from the API                    || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
+
     prescreeners =
         function(filter = NULL,
                  show_full = FALSE) {
@@ -431,4 +405,5 @@ api_access$methods(
             }
             return(output)
         }
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
 )

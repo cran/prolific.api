@@ -430,7 +430,6 @@ if (suppressMessages(require(reactable) && require(htmltools))) {
             fields
         }
 
-
     enclose <-
         function(x, delims = "\"") {
             paste0(delims, x, delims)
@@ -441,9 +440,7 @@ if (suppressMessages(require(reactable) && require(htmltools))) {
             enclose(paste0(names(x), ": ", Reduce(c, x), collapse = "; "))
         }
 
-
     classes <- (c("api_access", "prolific_study", "prolific_prescreener"))
-
 
     prefix_format <- function(x) {
         paste0(
@@ -503,7 +500,6 @@ if (suppressMessages(require(reactable) && require(htmltools))) {
         suppressMessages(invisible(x <- eval(parse(text = paste0("prolific.api::", classname, "()")))))
         sink(file = NULL)
 
-
         methods_list[] <- lapply(methods_list, function(method) {
             frmls <- paste0(names(formals(eval(parse(text = paste0("x$", method))))), collapse = ", ")
             c(
@@ -526,7 +522,6 @@ if (suppressMessages(require(reactable) && require(htmltools))) {
     })
 
     names(input_list) <- classes
-
 
     layer <- 1
     index <- NULL

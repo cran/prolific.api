@@ -12,7 +12,7 @@ prolific_api_access <- api_access(api_token = "<api_token>")
 
 ## ---- access-create ----
 
-suppressMessages(invisible(prolific_api_access <- api_access(api_token = readLines("~/.prolific_api/R_package_prolific.api_token", warn = FALSE))))
+suppressMessages(invisible(prolific_api_access <- api_access(api_token = readLines("~/credentials/prolific/api_tokens/R_package.prolific_api_token", warn = FALSE))))
 
 ## ---- access_check_authorization ----
 
@@ -54,7 +54,7 @@ pre_study <- prolific_study(
 ## ---- participant-id-prescreener ----
 
 participant_id <-
-  readLines("/Users/simonlenau/.prolific_api/participant_test_id")
+  readLines("~/credentials/prolific/Documents/participant_test_id")
 
 participant_id_prescreener <-
   do.call(

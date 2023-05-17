@@ -61,8 +61,7 @@ For more details, see the *[section on obtaining an API token](#get-token)*.
 
 # Core Functionalities
 
-The main functionalities in the `prolific.api` package are provided in three
-`ReferenceClasses`:
+The main functionalities in three `ReferenceClasses` :
 
 | Class                  | Functionality                                         |
 | :--------------------- | :---------------------------------------------------- |
@@ -211,11 +210,11 @@ contains the study's
 
 To them, the study will then will be presented as
 
-<img src="Study_Preview_dashboard.jpg" title="Dashboard summary of the Prolific Study" alt="Dashboard summary of the Prolific Study" width="85%" style="display: block; margin: auto;" />
+<img src="Study_Preview_dashboard.jpg" alt="Dashboard summary of the Prolific Study" width="85%" style="display: block; margin: auto;" />
 
 in the dashboard. Once they select the study in the dashboard, more details are shown:
 
-<img src="Study_Preview.jpg" title="Details of the Prolific Study" alt="Details of the Prolific Study" width="85%" style="display: block; margin: auto;" />
+<img src="Study_Preview.jpg" alt="Details of the Prolific Study" width="85%" style="display: block; margin: auto;" />
 
 
 
@@ -290,7 +289,7 @@ prolific_api_access$access(
 #> ======================================================================
 #> name:                      <Publicly visible study name>
 #> internal_name:             
-#> id:                        634e9b49674d6e362b157001
+#> id:                        64648077334b5b48eebef880
 #> project:                   61f12ae112c02bba9e3523b1
 #> external_study_url:        https://www.link_to_my_study.com
 #> total_available_places:    10
@@ -298,7 +297,7 @@ prolific_api_access$access(
 #> ======================================================================
 ```
 
-The output shows that the study has been assigned an `id` (`"634e9b49674d6e362b157001"` in this case).
+The output shows that the study has been assigned an `id` (`"64648077334b5b48eebef880"` in this case).
 This `id` is determined by [prolific.co](https://www.prolific.co/), 
 and the unique identifier for the study on the platform.
 You can now also find the study in the webinterface.
@@ -329,20 +328,26 @@ which  in this case includes only the new study created above:
 ```r
 print(list_of_studies)
 #>    creation_day creation_time internal_name
-#> 1:   2022-10-18      12:25:45              
+#> 1:   2023-05-17      07:21:27              
 #>                             name                       id study_type
-#> 1: <Publicly visible study name> 634e9b49674d6e362b157001     SINGLE
-#>    total_available_places places_taken reward      status
-#> 1:                     10            0     10 UNPUBLISHED
-#>    number_of_submissions total_cost stratum privacy_notice
-#> 1:                     0      139.9      NA             NA
+#> 1: <Publicly visible study name> 64648077334b5b48eebef880     SINGLE
+#>    total_available_places places_taken reward
+#> 1:                     10            0     10
+#>    max_submissions_per_participant max_concurrent_submissions
+#> 1:                               1                         -1
+#>         status number_of_submissions total_cost stratum publish_at
+#> 1: UNPUBLISHED                     0      139.9      NA         NA
+#>    is_underpaying below_prolific_min below_original_estimate
+#> 1:             NA                 NA                      NA
+#>    quota_requirements is_reallocated privacy_notice
+#> 1:                 NA          FALSE             NA
 ```
 
 
 To retrieve the study from the API, we use
 the
 study's endpoint, which is 
-`"studies/634e9b49674d6e362b157001"`:
+`"studies/64648077334b5b48eebef880"`:
 
 
 
@@ -351,10 +356,10 @@ study's endpoint, which is
 
 
 ```r
-# Obtain the study with ID 634e9b49674d6e362b157001 from Prolific
+# Obtain the study with ID 64648077334b5b48eebef880 from Prolific
 obtained_study <- 
 	prolific_api_access$access(
-		endpoint = c("studies","634e9b49674d6e362b157001"),
+		endpoint = c("studies","64648077334b5b48eebef880"),
 		method = "get"
 )
 ```
@@ -408,7 +413,7 @@ prolific_api_access$access(
 #> ======================================================================
 #> name:                      <Publicly visible study name>
 #> internal_name:             
-#> id:                        634e9b49674d6e362b157001
+#> id:                        64648077334b5b48eebef880
 #> project:                   61f12ae112c02bba9e3523b1
 #> external_study_url:        https://www.link_to_my_study.com
 #> total_available_places:    10
@@ -556,7 +561,7 @@ The changes can be applied as described in the
 
 
 
-**A full searchable list of all currently available prescreeners (as of 2022-10-18)
+**A full searchable list of all currently available prescreeners (as of 2023-05-17)
 is available in the following
 [list of available prescreeners](#prescreener-list).
 It also includes example code snippets for each prescreener and available constraints.
@@ -565,7 +570,7 @@ It also includes example code snippets for each prescreener and available constr
 
 # List of available  `prolific_prescreeners` {#prescreener-list}
 
-The following table contains **all** currently (as of 2022-10-18) available prescreeners.
+The following table contains **all 301**  currently (as of 2023-05-17) available prescreeners.
 The `prescreener title` is to be used in the `title` field of a `prolific_prescreener` object.
 
 ***Click on the respective row to show all available constraints ***

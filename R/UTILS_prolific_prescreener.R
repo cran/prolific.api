@@ -1,3 +1,4 @@
+# ===================== > .output_prolific_prescreener < ===================== #
 #' Function to convert prolific_prescreener objects
 #' to lists for passing them to the \href{https://docs.prolific.co/docs/api-docs/public/}{Prolific API}
 #'
@@ -139,7 +140,11 @@
             )
         )
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+
+
+# ====================== > .to_prolific_prescreeners < ======================= #
 #' Function to convert prescreeners
 #' as returned by the \href{https://docs.prolific.co/docs/api-docs/public/}{Prolific API}
 #' to prolific_prescreener objects
@@ -168,7 +173,11 @@
 
         result <- lapply(active_requirements_indices, function(i) {
             constraints <- as.list(prescreeners_input$attributes[[i]]$value)
-            names(constraints) <- if (sum(duplicated(prescreeners_input$attributes[[i]]$name)) == 0) prescreeners_input$attributes[[i]]$name else prescreeners_input$attributes[[i]]$id
+            names(constraints) <- if (sum(duplicated(prescreeners_input$attributes[[i]]$name)) == 0) {
+                prescreeners_input$attributes[[i]]$name
+            } else {
+                prescreeners_input$attributes[[i]]$id
+            }
             constraints <- constraints[vapply(constraints, function(x) any(x != FALSE), TRUE)]
 
             return(
@@ -184,7 +193,9 @@
 
         return(result)
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+# ==================== > .make_prescreener_constraints < ===================== #
 # Function to convert dots to a named list
 #'
 #' @return
@@ -214,3 +225,4 @@
         }))
     return(output)
 }
+# ────────────────────────────────── <end> ─────────────────────────────────── #

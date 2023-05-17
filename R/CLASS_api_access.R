@@ -96,9 +96,11 @@ NULL
 #'
 api_access <- setRefClass(
     Class = "api_access",
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    # Fields Block (setter/getter functions)
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    # ================================ > fields < ================================ #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || setter / getter functions                                              || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
     fields = list(
         accessors = function(value) .accessField("accessors", value, .self$.internals$fields, TRUE),
         api_token = function(value) {
@@ -118,9 +120,10 @@ api_access <- setRefClass(
         },
         entrypoint = function(value) .accessField("entrypoint", value, .self$.internals$fields, TRUE)
     ),
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    # Methods Block
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
+
+    # ========================== > initialize method < =========================== #
+
     methods = list(
         # Initializer
         initialize =
@@ -174,4 +177,5 @@ api_access <- setRefClass(
                 api_token <<- api_token
             }
     )
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
 )

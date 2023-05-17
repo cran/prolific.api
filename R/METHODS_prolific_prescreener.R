@@ -20,11 +20,13 @@
 #'      prescreener$validity_check()
 #' }
 prolific_prescreener$methods(
+    # ================================= > show < ================================= #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || Show the main contents of a prolific_prescreener object to the user    || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
     show =
         function() {
-            # "
-            #     Show the main contents of a prolific_prescreener object to the user.
-            # "
             sep <- paste0(rep("=", getOption("width")), collapse = "")
             indent <- "    "
 
@@ -42,11 +44,17 @@ prolific_prescreener$methods(
             }
             cat("\n\n")
         },
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
+
+    # ============================ > validity_check < ============================ #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || Check whether the prescreener is valid in terms of the                 || #
+    # || \href{https://docs.prolific.co/docs/api-docs/public/}{Prolific API}    || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
+
     validity_check =
         function() {
-            # "
-            #     Check whether the study is valid in terms of the \href{https://docs.prolific.co/docs/api-docs/public/}{Prolific API}
-            # "
             prolific_prescreener_list <- tryCatch(getOption(".prolific.api.latest.working.access")$.internals$methods$prescreeners(), error = function(e) NULL)
 
             if (all(is.null(prolific_prescreener_list))) {
@@ -66,4 +74,5 @@ prolific_prescreener$methods(
                 return(TRUE)
             }
         }
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
 )

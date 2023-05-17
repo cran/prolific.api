@@ -1,3 +1,4 @@
+# ================================ > .quote < ================================ #
 #' Function for enclosing arguments in quotation marks
 #'
 #' @param ...
@@ -11,11 +12,9 @@
     function(...) {
         return(paste0("\"", c(...), "\""))
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
-
-
-
-
+# =============================== > .execute < =============================== #
 #' Function to paste and run commands in system shell
 #'
 #' @param ...
@@ -46,7 +45,9 @@
             )
         )
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+# ============================ > .format_input < ============================= #
 #' Function to format data (list, file or prolific study) as JSON
 #'
 #' @param data
@@ -93,7 +94,9 @@
             data <-
                 list(
                     eligibility_requirements =
-                        lapply(data, function(x) x$.internals$methods$output(list_of_prescreeners))
+                        lapply(data, function(x) {
+                            x$.internals$methods$output(list_of_prescreeners)
+                        })
                 )
         }
 
@@ -102,13 +105,9 @@
                 "-d '",
                 if (!data_file) {
                     # Convert data to JSON format if it is not a file
-                    gsub(
-                        "'",
-                        "\\'",
-                        jsonlite::toJSON(
-                            data,
-                            auto_unbox = TRUE
-                        )
+                    jsonlite::toJSON(
+                        data,
+                        auto_unbox = TRUE
                     )
                 } else {
                     # Add data file path
@@ -125,11 +124,15 @@
             )
         )
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+# ========================== > ..tryCatchfromJSON < ========================== #
 ..tryCatchfromJSON <- function(x) {
     tryCatch(jsonlite::fromJSON(x), error = function(e) x)
 }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+# ============================ > .format_output < ============================ #
 #' Function to format JSON as list if requested
 #'
 #' @param output
@@ -151,7 +154,9 @@
             ..tryCatchfromJSON
         )(output)
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+# ============================== > .make_url < =============================== #
 #' Function to combine URL components to a single URL
 #'
 #' @param ...
@@ -185,7 +190,9 @@
             )
         )
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+# ======================= > .collapse_url_parameters < ======================= #
 #' Function to collapse URL parameters
 #'
 #' @param url_parameters
@@ -205,7 +212,9 @@
             collapse = "&"
         ))
     }
-# collapsed_url_parameters <- gsub("(.*?)\\?(.*)", "\\2", external_study_url)
+# ────────────────────────────────── <end> ─────────────────────────────────── #
+
+# ====================== > .decollapse_url_parameters < ====================== #
 #' Function to de-collapse URL parameters
 #'
 #' @param collapsed_url_parameters
@@ -217,11 +226,13 @@
 .decollapse_url_parameters <-
     function(collapsed_url_parameters) {
         x <- strsplit(collapsed_url_parameters, "&")[[1]]
-        output <- as.list(gsub("(.+)=\\{(.*?)\\}", "\\2", x))
-        names(output) <- gsub("(.*)=\\{(.*?)\\}", "\\1", x)
+        output <- as.list(gsub("(.+)=\\{(.*?)\\}", "\2", x))
+        names(output) <- gsub("(.*)=\\{(.*?)\\}", "\1", x)
         return(output)
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
 
+# ============================= > .pass_named < ============================== #
 #' Pass arbitrary arguments with names
 #'
 #' @param ... arbitrary named arguments
@@ -235,3 +246,5 @@
         )
     )
 }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
+

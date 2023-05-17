@@ -1,3 +1,7 @@
+
+## ---- list_of_prescreeners_count ----
+prolific_api_access$prescreeners()[, .N]
+
 ## ---- list_of_prescreeners_create ----
 if (require(data.table)) {
     list_of_prescreeners <-

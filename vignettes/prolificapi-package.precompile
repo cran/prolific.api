@@ -73,8 +73,7 @@ For more details, see the *[section on obtaining an API token](#get-token)*.
 
 # Core Functionalities
 
-The main functionalities in the `prolific.api` package are provided in three
-`ReferenceClasses`:
+The main functionalities in three `ReferenceClasses` :
 
 | Class                  | Functionality                                         |
 | :--------------------- | :---------------------------------------------------- |
@@ -434,7 +433,7 @@ It also includes example code snippets for each prescreener and available constr
 
 # List of available  `prolific_prescreeners` {#prescreener-list}
 
-The following table contains **all** currently (as of `r Sys.Date()`) available prescreeners.
+The following table contains **all `r prolific_api_access$prescreeners()[,.N]`**  currently (as of `r Sys.Date()`) available prescreeners.
 The `prescreener title` is to be used in the `title` field of a `prolific_prescreener` object.
 
 ***Click on the respective row to show all available constraints ***

@@ -275,22 +275,26 @@
 #' @exportClass prolific_prescreener
 prolific_prescreener <- setRefClass(
     Class = "prolific_prescreener",
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    # Fields Block (setter/getter functions)
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    fields = list(
-        title = function(value) .accessField("title", value, .self$.internals$fields, TRUE),
-        constraints = function(value) .accessField("constraints", value, .self$.internals$fields, TRUE)
-    ),
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    # Methods Block
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+    # ================================ > fields < ================================ #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || setter / getter functions                                              || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
+    fields =
+        list(
+            title = function(value) .accessField("title", value, .self$.internals$fields, TRUE),
+            constraints = function(value) .accessField("constraints", value, .self$.internals$fields, TRUE)
+        ),
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
+
+    # ========================== > initialize method < =========================== #
+
     methods = list(
         # Initializer
         initialize =
             function(title = NULL,
                      ...) {
-
                 # Create Internals
                 assign(
                     ".internals",
@@ -317,4 +321,5 @@ prolific_prescreener <- setRefClass(
                 assign("output", function(x) .output_prolific_prescreener(.self, x), .self$.internals$methods)
             }
     )
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
 )

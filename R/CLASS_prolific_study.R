@@ -267,9 +267,12 @@ NULL
 #' @export prolific_study
 prolific_study <- setRefClass(
     Class = "prolific_study",
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    # Fields Block (setter/getter functions)
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    # ================================ > fields < ================================ #
+
+    # ┌┌────────────────────────────────────────────────────────────────────────┐┐ #
+    # || setter / getter functions                                              || #
+    # └└────────────────────────────────────────────────────────────────────────┘┘ #
+
     fields = list(
         completion_code = function(value) .accessField("completion_code", value, .self$.internals$fields, TRUE),
         completion_option = function(value) .accessField("completion_option", value, .self$.internals$fields, TRUE),
@@ -304,9 +307,9 @@ prolific_study <- setRefClass(
         total_available_places = function(value) .accessField("total_available_places", value, .self$.internals$fields, TRUE),
         url_parameters = function(value) .accessField("url_parameters", value, .self$.internals$fields, TRUE)
     ),
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-    # Methods Block
-    # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    # ────────────────────────────────── <end> ─────────────────────────────────── #
+
+    # ========================== > initialize method < =========================== #
     methods = list(
         # Initializer
         initialize =
@@ -329,7 +332,6 @@ prolific_study <- setRefClass(
                      total_available_places = 1L,
                      url_parameters = list(prolific_id = "{%PROLIFIC_PID%}", study_id = "{%STUDY_ID%}", session_id = "{%SESSION_ID%}"),
                      ...) {
-
                 # Create Internals
                 assign(
                     ".internals",
@@ -401,5 +403,6 @@ prolific_study <- setRefClass(
 
                 assign("output", function(x) .output_prolific_study(.self, x), .self$.internals$methods)
             }
+        # ────────────────────────────────── <end> ─────────────────────────────────── #
     )
 )

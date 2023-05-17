@@ -1,5 +1,5 @@
 
-
+# ======================== > .output_prolific_study < ======================== #
 .output_prolific_study <-
     function(prolific_study,
              prescreeners = NULL) {
@@ -52,3 +52,4 @@
             )
         )
     }
+# ────────────────────────────────── <end> ─────────────────────────────────── #
