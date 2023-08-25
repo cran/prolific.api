@@ -86,7 +86,7 @@
         # Update the API authentication string
         assign(
             "api_authorization",
-            paste0("-H 'Authorization: Token ", .self$api_token, "'"),
+            paste0("-H \"Authorization: Token ", .self$api_token, "\""),
             envir = .self$.internals
         )
     }

@@ -1,6 +1,6 @@
 Package: prolific.api
 Title: A User-Friendly Interface for Accessing the Prolific API
-Version: 0.5.1
+Version: 0.5.2
 Authors@R: 
     person(given="Simon", family="Lenau" , email="lenau@cispa.de", role = c("aut", "cre"))
 Description: A user-friendly interface for creating and managing empirical crowd-sourcing studies via API access to <https://www.prolific.co>. 
@@ -12,9 +12,9 @@ RoxygenNote: 7.2.1
 Suggests: htmltools, knitr, reactable, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-05-17 07:47:24 UTC; simonlenau
+Packaged: 2023-08-25 09:57:21 UTC; simonlenau
 Author: Simon Lenau [aut, cre]
 Maintainer: Simon Lenau <lenau@cispa.de>
 Depends: R (>= 3.5.0)
 Repository: CRAN
-Date/Publication: 2023-05-17 08:20:02 UTC
+Date/Publication: 2023-08-25 10:20:02 UTC

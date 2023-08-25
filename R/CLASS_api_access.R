@@ -164,9 +164,9 @@ api_access <- setRefClass(
                 assign(
                     ".referer",
                     paste0(
-                        "-H 'Referer: ",
+                        "-H \"Referer: ",
                         "R_package_prolific_api/v", gsub("\\.", "_", sessionInfo()$otherPkgs$`prolific.api`$Version), "/",
-                        "'"
+                        "\""
                     ),
                     envir = .self$.internals$fields
                 )

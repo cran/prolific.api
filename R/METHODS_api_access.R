@@ -282,12 +282,67 @@ api_access$methods(
 
                 output <-
                     c(output, list(date_created))
-
-                output <-
-                    Reduce(
-                        cbind,
-                        output
+                
+                filter_start <-
+                    c(
+                        which(names(output$filters) %in% c("filter_id")),
+                        length(output$filters) + 1
                     )
+                
+                output$filters <-
+                    data.table(
+                        filters =
+                            lapply(
+                                1:(length(filter_start) - 1),
+                                function(i) {
+                                    output$filters[filter_start[i]:(filter_start[i + 1] - 1)]
+                                }
+                            )
+                    )
+                
+                
+                output_dims <-
+                    Reduce(rbind, lapply(output, function(x) {
+                        if (is.null(dim(x))) {
+                            return(c(length(x), 1))
+                        }
+                        return(dim(x))
+                    }))
+                
+                output_dims_modes <-
+                    apply(
+                        output_dims,
+                        2,
+                        function(x) {
+                            tbl <-
+                                table(x)
+                            as.numeric(names(tbl)[which.max(tbl)])
+                        }
+                    )
+               
+                outliers <-
+                    which(
+                        !output_dims[, 1] %in% output_dims_modes[1]
+                    )
+
+                if (length(outliers) > 0) {
+                    warning(
+                        paste0(
+                            "Removed the following data columns: due to erroneous dimensions :", names(output)[outliers]
+                        )
+                    )
+                    output <-
+                        Reduce(
+                            cbind,
+                            output[-outliers]
+                        )
+                } else {
+                    output <-
+                        Reduce(
+                            cbind,
+                            output
+                        )
+                }
 
                 if (nrow(output) == 0) {
                     output <-
